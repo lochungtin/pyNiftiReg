@@ -100,3 +100,15 @@ a NIfTI sform. A displacement `u` stands for the map `id + u`.
 ```bash
 uv run pytest
 ```
+
+---
+
+## PyPI
+
+[https://pypi.org/project/pyNiftiReg/](https://pypi.org/project/pybiftiReg/)
+
+---
+
+## License
+
+See `LICENSE` for details.

@@ -105,7 +105,7 @@ uv run pytest
 
 ## PyPI
 
-[https://pypi.org/project/pyNiftiReg/](https://pypi.org/project/pybiftiReg/)
+[https://pypi.org/project/pyniftireg/](https://pypi.org/project/pyniftireg/)
 
 ---
 

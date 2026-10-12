@@ -1,14 +1,14 @@
 [build-system]
-requires = ["hatchling"]
+requires = ["hatchling", "hatch-vcs"]
 build-backend = "hatchling.build"
 
 [project]
 name = "pyniftireg"
-version = "0.1.0"
+dynamic = ["version"]
 description = "PyTorch reimplementation of NiftyReg-style registration: affine + B-spline stationary velocity fields."
 readme = "README.md"
 requires-python = ">=3.10"
-authors = [{ name = "lochungtin" }]
+authors = [{ name = "Chung Tin Lo", email = "lochungtin@gmail.com" }]
 keywords = ["registration", "niftyreg", "diffeomorphism", "svf", "b-spline", "mri", "pytorch"]
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -21,6 +21,12 @@ dependencies = [
     "torch>=2.1",
 ]
 
+[project.urls]
+Homepage = "https://github.com/lochungtin/pyNiftiReg"
+Repository = "https://github.com/lochungtin/pyNiftiReg.git"
+"Bug Tracker" = "https://github.com/lochungtin/pyNiftiReg/issues"
+Changelog = "https://github.com/lochungtin/pyNiftiReg/blob/master/CHANGELOG.md"
+
 [project.optional-dependencies]
 io = ["nibabel>=5.0"]
 n4 = ["SimpleITK>=2.3"]
@@ -31,8 +37,18 @@ dev = [
     "pyniftireg[io,n4]",
 ]
 
+[tool.hatch.version]
+source = "vcs"
+# Same scheme as guava-rt: untagged commits build as X.Y.Z.postN.devM (unique on TestPyPI).
+raw-options = { version_scheme = "no-guess-dev", local_scheme = "no-local-version", fallback_version = "0.0.0" }
+
 [tool.hatch.build.targets.wheel]
 packages = ["src/pyniftireg"]
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.1.0"
+tag_format = "v$version"
 
 [tool.ruff]
 line-length = 100

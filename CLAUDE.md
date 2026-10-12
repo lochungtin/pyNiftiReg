@@ -12,6 +12,19 @@ pyNiftiReg (`pyniftireg`) is a PyTorch reimplementation of NiftyReg-style regist
 - `uv build`: wheel + sdist into `dist/`
 - **Don't run tests (or anything else that uses the GPU) without the user's go-ahead**: the GPU is often busy with other jobs. `CUDA_VISIBLE_DEVICES=` forces CPU. Don't run several GPU processes at once: PyTorch's caching allocator keeps memory after a process's GPU work ends.
 
+## Release / CI
+
+The setup is copied from `../guava-rt`.
+
+- **Versioning:** the version comes from git tags via hatch-vcs (`no-guess-dev`: untagged commits build as `X.Y.Z.postN.devM`). Never hard-code it in `pyproject.toml`.
+- **Commits must be conventional** (`feat:`, `fix:`, `docs:` ...): Commitizen derives the version bump and `CHANGELOG.md` from them.
+- **`branch-ci.yml`** (push to master):
+  1. Commit lint and tests run (CPU torch, Python 3.10–3.13; ruff and mypy on 3.12).
+  2. Build, then publish to TestPyPI.
+  3. `cz bump` commits, tags `vX.Y.Z` and pushes. Pushes from the bot are skipped by the guard job.
+- **`release.yml`** (a `v*.*.*` tag): publish to PyPI and create a GitHub Release with that version's changelog section.
+- **Prerequisites:** OIDC trusted publishing for `pyniftireg` (environments `testpypi` and `pypi`), and a `RELEASE_TOKEN` secret that can push to master.
+
 ## Architecture
 
 `registration.py` holds the whole algorithm in `TorchReg`; the other modules are general field and image utilities it is built on.

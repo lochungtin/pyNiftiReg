@@ -1063,7 +1063,6 @@ wheels = [
 
 [[package]]
 name = "pyniftireg"
-version = "0.1.0"
 source = { editable = "." }
 dependencies = [
     { name = "numpy", version = "2.2.6", source = { registry = "https://pypi.org/simple" }, marker = "python_full_version < '3.11'" },
@@ -1090,15 +1089,16 @@ n4 = [
 [package.metadata]
 requires-dist = [
     { name = "mypy", marker = "extra == 'dev'", specifier = ">=1.10" },
+    { name = "nibabel", marker = "extra == 'dev'", specifier = ">=5.0" },
     { name = "nibabel", marker = "extra == 'io'", specifier = ">=5.0" },
     { name = "numpy", specifier = ">=1.24" },
-    { name = "pyniftireg", extras = ["io", "n4"], marker = "extra == 'dev'" },
     { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.0" },
     { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.6" },
+    { name = "simpleitk", marker = "extra == 'dev'", specifier = ">=2.3" },
     { name = "simpleitk", marker = "extra == 'n4'", specifier = ">=2.3" },
     { name = "torch", specifier = ">=2.1" },
 ]
-provides-extras = ["io", "n4", "dev"]
+provides-extras = ["dev", "io", "n4"]
 
 [[package]]
 name = "pytest"

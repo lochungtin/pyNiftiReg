@@ -55,6 +55,9 @@ line-length = 100
 target-version = "py310"
 src = ["src", "tests"]
 
+[tool.ruff.format]
+exclude = ["*.md"]
+
 [tool.ruff.lint]
 select = ["E", "F", "W", "I", "UP", "B", "NPY", "RUF"]
 

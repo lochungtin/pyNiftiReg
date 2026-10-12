@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from dataclasses import replace
 from pathlib import Path
 
 import numpy as np
@@ -171,17 +172,22 @@ def test_register_from_files_with_masks(tmp_path: Path) -> None:
 
 
 def test_register_accepts_arrays() -> None:
-    """numpy and torch inputs, with and without spaces, match ``register_arrays``."""
+    """numpy and torch inputs, with and without spaces, match ``register_arrays``.
+
+    On CPU, where runs are deterministic: CUDA's atomic ``index_add`` in the NMI histogram makes
+    two GPU runs on the same input differ by ~0.01 voxels.
+    """
+    params = replace(FAST, device="cpu")
     shape = (40, 40)
     space = ImageSpace.from_spacing(shape, 2.0)
     a = _texture(shape)
     b = torch.roll(a, 2, dims=2)
     mask = torch.zeros(1, 1, *shape)
     mask[..., 5:35, 5:35] = 1
-    expected = TorchReg(FAST).register_arrays(
+    expected = TorchReg(params).register_arrays(
         a, space, b, space, reference_mask=mask, floating_mask=mask
     )
-    r_np = TorchReg(FAST).register(
+    r_np = TorchReg(params).register(
         a[0, 0].numpy(),
         b[0, 0].numpy().astype(np.float64),
         reference_mask=mask[0, 0].numpy() > 0,
@@ -189,7 +195,7 @@ def test_register_accepts_arrays() -> None:
         reference_space=space,
         floating_space=space,
     )
-    r_t = TorchReg(FAST).register(a, b[0, 0], reference_mask=mask, floating_mask=mask)
+    r_t = TorchReg(params).register(a, b[0, 0], reference_mask=mask, floating_mask=mask)
     for r in (r_np, r_t):
         assert r.velocity.shape == (1, 2, *shape)
     assert np.allclose(r_np.affine, expected.affine, atol=1e-4)

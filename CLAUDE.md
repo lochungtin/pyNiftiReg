@@ -8,7 +8,7 @@ pyNiftiReg (`pyniftireg`) is a PyTorch reimplementation of NiftyReg-style regist
 
 - `uv sync --extra dev`: install (pytest, ruff, mypy, plus the `[io]` nibabel and `[n4]` SimpleITK extras)
 - `uv run pytest`: all tests; `uv run pytest tests/test_torchreg.py::test_square_to_circle`: a single test
-- `uv run ruff check src tests`, `uv run ruff format src tests`, `uv run mypy` (strict, `src` only)
+- `uv run ruff check .`, `uv run ruff format --check .`, `uv run mypy` (strict, `src` only): what CI runs. Check `.`, not just `src tests`: CI covers the whole repo, and Markdown is excluded from formatting in `pyproject.toml` (ruff formats code blocks in `.md` files otherwise).
 - `uv build`: wheel + sdist into `dist/`
 - **Don't run tests (or anything else that uses the GPU) without the user's go-ahead**: the GPU is often busy with other jobs. `CUDA_VISIBLE_DEVICES=` forces CPU. Don't run several GPU processes at once: PyTorch's caching allocator keeps memory after a process's GPU work ends.
 
@@ -17,7 +17,13 @@ pyNiftiReg (`pyniftireg`) is a PyTorch reimplementation of NiftyReg-style regist
 The setup is copied from `../guava-rt`.
 
 - **Versioning:** the version comes from git tags via hatch-vcs (`no-guess-dev`: untagged commits build as `X.Y.Z.postN.devM`). Never hard-code it in `pyproject.toml`.
-- **Commits must be conventional** (`feat:`, `fix:`, `docs:` ...): Commitizen derives the version bump and `CHANGELOG.md` from them.
+- **Commits must be conventional**: Commitizen derives the version bump and `CHANGELOG.md` from them.
+  - The type decides whether a push releases: `fix:` bumps the patch version and `feat:` the minor version, each publishing to PyPI. `docs:`, `ci:`, `chore:`, `test:` and `refactor:` don't release.
+  - Don't use `fix:` for non-code changes (README, CI config), or it ships a release.
+  - A push with no release-worthy commits makes the auto-bump job fail with "no commits to bump". That's expected, not a CI bug.
+- **The bot pushes to master**: after a release, `cz bump` adds a bump commit and a changelog commit. Run `git pull --ff-only` before committing.
+- **Don't edit `[tool.commitizen] version` or `CHANGELOG.md` by hand**: `cz bump` maintains both.
+- **The README on PyPI only updates with the next release.** The GitHub README updates on push.
 - **`branch-ci.yml`** (push to master):
   1. Commit lint and tests run (CPU torch, Python 3.10–3.13; ruff and mypy on 3.12).
   2. Build, then publish to TestPyPI.
